@@ -6,6 +6,8 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautif
 import Field from "@/components/Field";
 import { FaPlus } from "react-icons/fa";
 import type { DraggableProvided, DraggableStateSnapshot, DroppableProvided } from "react-beautiful-dnd";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const defaultPersonalFields = [
   { id: "fullName", label: "Full Name", value: "", type: "text" },
@@ -67,9 +69,11 @@ const defaultGodImages = [
 ];
 
 const templateOptions = [
-  { key: "classic", label: "Classic" },
-  { key: "gold", label: "Gold" },
-  { key: "maroon", label: "Maroon" },
+  { key: "classic", label: "Classic", description: "Clean and simple" },
+  { key: "elegant", label: "Elegant Gold", description: "Premium golden theme" },
+  { key: "royal", label: "Royal Maroon", description: "Rich maroon design" },
+  { key: "modern", label: "Modern Blue", description: "Contemporary blue theme" },
+  { key: "traditional", label: "Traditional Red", description: "Traditional red design" },
 ];
 
 // Helper to convert File to base64
@@ -94,6 +98,7 @@ export default function BiodataPage() {
   const [selectedGodImage, setSelectedGodImage] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const sectionState: Record<SectionKey, any[]> = {
     personalFields,
@@ -121,15 +126,18 @@ export default function BiodataPage() {
       godName,
       selectedTemplate,
     };
+    console.log('Saving to localStorage:', data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, [profilePicUrl, personalFields, contactFields, professionalFields, godImageUrl, selectedGodImage, godName, selectedTemplate]);
 
   // Load from localStorage on mount
   useEffect(() => {
     const data = localStorage.getItem(STORAGE_KEY);
+    console.log('Loading from localStorage:', data);
     if (data) {
       try {
         const parsed = JSON.parse(data);
+        console.log('Parsed data:', parsed);
         if (parsed.profilePicUrl) setProfilePicUrl(parsed.profilePicUrl);
         if (parsed.personalFields) setPersonalFields(parsed.personalFields);
         if (parsed.contactFields) setContactFields(parsed.contactFields);
@@ -138,7 +146,9 @@ export default function BiodataPage() {
         if (parsed.selectedGodImage) setSelectedGodImage(parsed.selectedGodImage);
         if (parsed.godName) setGodName(parsed.godName);
         if (parsed.selectedTemplate) setSelectedTemplate(parsed.selectedTemplate);
-      } catch { }
+      } catch (error) {
+        console.error('Error parsing localStorage data:', error);
+      }
     }
   }, []);
 
@@ -159,11 +169,6 @@ export default function BiodataPage() {
   const handleChooseTemplate = useCallback(() => {
     setShowTemplateModal(true);
   }, []);
-
-  const handleSelectTemplate = (key: string) => {
-    setSelectedTemplate(key);
-    setShowTemplateModal(false);
-  };
 
   const handleProfilePicChange = async (file: File | null) => {
     setProfilePic(file);
@@ -267,12 +272,125 @@ export default function BiodataPage() {
     }
   };
 
+  const handleDownload = async () => {
+    if (isGeneratingPDF) return;
+    
+    setIsGeneratingPDF(true);
+    
+    try {
+      // Get the preview element
+      const previewElement = document.querySelector(`.${styles.preview}`) as HTMLElement;
+      
+      if (!previewElement) {
+        alert('Preview element not found');
+        return;
+      }
+
+      // Create a clone for PDF generation to avoid affecting the display
+      const clone = previewElement.cloneNode(true) as HTMLElement;
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      clone.style.width = '800px'; // Fixed width for PDF
+      clone.style.height = 'auto';
+      clone.style.transform = 'none';
+      clone.style.boxShadow = 'none';
+      clone.style.border = '1px solid #ddd';
+      clone.style.padding = '40px';
+      clone.style.margin = '0';
+      clone.style.backgroundColor = 'white';
+      clone.setAttribute('data-pdf', 'true');
+      
+      // Add to DOM temporarily
+      document.body.appendChild(clone);
+
+      // Wait for images to load
+      const images = clone.querySelectorAll('img');
+      await Promise.all(
+        Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })
+      );
+
+      // Convert to canvas
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 800,
+        height: clone.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      // Remove clone from DOM
+      document.body.removeChild(clone);
+
+      // Create PDF
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if needed
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Download PDF
+      const templateName = templateOptions.find(t => t.key === selectedTemplate)?.label || 'Classic';
+      pdf.save(`marriage-biodata-${templateName.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   return (
     <div className={styles.biodataWrapper}>
       <div className={styles.formColumn}>
         <div className={styles.formActions}>
-          <button className={styles.formButton} onClick={handleResetForm}>Reset Form</button>
-          <button className={styles.formButton} onClick={handleChooseTemplate}>Choose Template</button>
+          <div className={styles.actionButtons}>
+            <button
+              className={styles.actionButton}
+              onClick={handleChooseTemplate}
+            >
+              Choose Template
+            </button>
+            <button
+              className={styles.actionButton}
+              onClick={handleResetForm}
+            >
+              Reset Form
+            </button>
+            <button
+              className={styles.actionButton}
+              onClick={handleDownload}
+              disabled={isGeneratingPDF}
+            >
+              {isGeneratingPDF ? 'Generating PDF...' : 'Download Biodata'}
+            </button>
+          </div>
         </div>
         <div className={styles.godImageSelector}>
           <div className={styles.godImageUploadWrapper}>
@@ -356,27 +474,48 @@ export default function BiodataPage() {
           </DragDropContext>
         </div>
         {showTemplateModal && (
-          <div className={styles.templateModalOverlay}>
-            <div className={styles.templateModal}>
-              <button className={styles.templateModalClose} onClick={() => setShowTemplateModal(false)} title="Close">×</button>
-              <div className={styles.templateModalTitle}>Choose a Template</div>
-              <div className={styles.templatePicker}>
-                {templateOptions.map(opt => (
-                  <button
-                    key={opt.key}
-                    className={styles.templateOption + (selectedTemplate === opt.key ? ' ' + styles.templateOptionActive : '')}
-                    onClick={() => handleSelectTemplate(opt.key)}
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <h3>Choose Template</h3>
+              <div className={styles.templateGrid}>
+                {templateOptions.map((template) => (
+                  <div
+                    key={template.key}
+                    className={`${styles.templateOption} ${selectedTemplate === template.key ? styles.selected : ''}`}
+                    onClick={() => {
+                      setSelectedTemplate(template.key);
+                      setShowTemplateModal(false);
+                    }}
                   >
-                    {opt.label}
-                  </button>
+                    <div className={`${styles.templatePreview} ${styles[template.key]}`}>
+                      <div className={styles.templatePreviewHeader}>
+                        <h4>Marriage Biodata</h4>
+                        <p>{template.label}</p>
+                      </div>
+                    </div>
+                    <div className={styles.templateInfo}>
+                      <h4>{template.label}</h4>
+                      <p>{template.description}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
+              <button
+                className={styles.closeButton}
+                onClick={() => setShowTemplateModal(false)}
+              >
+                Close
+              </button>
             </div>
           </div>
         )}
       </div>
       <div className={styles.previewColumn}>
-        <div className={styles.livePreview + ' ' + styles[selectedTemplate]}>
+        <div className={`${styles.preview} ${styles[selectedTemplate] || styles.classic}`}>
+          <div className={styles.previewHeader}>
+            <h2 className={styles.templateName}>Marriage Biodata</h2>
+            <p className={styles.templateDetails}>Template: {templateOptions.find(t => t.key === selectedTemplate)?.label}</p>
+          </div>
           {selectedGodImage && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.7rem' }}>
               <img

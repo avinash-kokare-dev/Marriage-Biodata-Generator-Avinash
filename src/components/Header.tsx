@@ -12,8 +12,7 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { href: '/', label: 'Home' },
-  { href: '/biodata/create', label: 'Biodata Creator' },
+  { href: '/biodata', label: 'Biodata Creator' },
   { href: '/pool', label: 'Marriage Pool' },
   { href: '/invitations', label: 'Invitations' },
   { href: '/auth/login', label: 'Login' }, // Example auth link

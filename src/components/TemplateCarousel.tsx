@@ -5,15 +5,38 @@ import styles from "./TemplateCarousel.module.css";
 const templates = [
   {
     id: 1,
-    image: 'https://biodatamaker.app/_next/image/?url=%2Fimages%2Fexamples%2Feg9.webp&w=750&q=75'
+    name: "Classic",
+    description: "Clean and simple design",
+    image: "https://via.placeholder.com/400x300/f8fafc/6366f1?text=Classic+Template",
+    features: ["Professional layout", "Easy to read", "Traditional format"]
   },
   {
     id: 2,
-    image: 'https://biodatamaker.app/_next/image/?url=%2Fimages%2Fexamples%2Feg23.png&w=750&q=75'
+    name: "Elegant Gold",
+    description: "Premium golden theme",
+    image: "https://via.placeholder.com/400x300/fff9e6/d4af37?text=Elegant+Gold",
+    features: ["Luxury design", "Golden accents", "Premium feel"]
   },
   {
     id: 3,
-    image: 'https://biodatamaker.app/_next/image/?url=%2Fimages%2Fexamples%2Feg24.png&w=750&q=75'
+    name: "Royal Maroon",
+    description: "Rich maroon design",
+    image: "https://via.placeholder.com/400x300/2d1b3d/8b0000?text=Royal+Maroon",
+    features: ["Royal appearance", "Deep colors", "Sophisticated look"]
+  },
+  {
+    id: 4,
+    name: "Modern Blue",
+    description: "Contemporary blue theme",
+    image: "https://via.placeholder.com/400x300/f0f8ff/3b82f6?text=Modern+Blue",
+    features: ["Modern design", "Clean lines", "Professional blue"]
+  },
+  {
+    id: 5,
+    name: "Traditional Red",
+    description: "Traditional red design",
+    image: "https://via.placeholder.com/400x300/fff5f5/dc2626?text=Traditional+Red",
+    features: ["Traditional style", "Red accents", "Cultural elements"]
   }
 ];
 
