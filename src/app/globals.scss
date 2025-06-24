@@ -1,0 +1,13 @@
+// src/styles/globals.scss
+@import '../components/variables.scss';
+@import '../components/mixins.scss';
+@import '../components/base.scss'; // This will include your reset, typography etc.
+
+// You can add more global styles directly here or import other partials
+// For example, utility classes:
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-unit * 2;
+}

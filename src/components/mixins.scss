@@ -1,0 +1,53 @@
+// src/styles/mixins.scss
+@import 'variables'; // Assuming variables.scss is in the same directory or path is adjusted
+
+// Responsive Mixin
+// Define a map for easier use with the responsive mixin
+$breakpoints: (
+  "sm": $breakpoint-sm,
+  "md": $breakpoint-md,
+  "lg": $breakpoint-lg,
+  "xl": $breakpoint-xl
+);
+
+@mixin responsive($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint #{$breakpoint} not found in $breakpoints map. Available breakpoints: #{map-keys($breakpoints)}";
+  }
+}
+
+// Flexbox Centering Mixin
+@mixin flex-center($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+// Button Reset Mixin
+@mixin button-reset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  appearance: none; // Standard property
+  cursor: pointer;
+
+  &:focus {
+    outline: none; // Or your preferred focus style, e.g., a subtle box-shadow
+    // Example: box-shadow: 0 0 0 2px rgba($primary-color, 0.5);
+  }
+}
+
+// Add other global mixins here if you create more

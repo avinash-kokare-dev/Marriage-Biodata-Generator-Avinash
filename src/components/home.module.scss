@@ -1,0 +1,276 @@
+// src/app/page.module.scss
+@import './variables';
+@import './mixins';
+
+// Animation base class
+.animateFadeIn {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.visible { // Class added by Intersection Observer
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// --- Common styles for sections (applied within specific section classes below) ---
+// We are removing the generic `section { ... }` block.
+// Instead, common properties will be added to each specific section class.
+// Common h2 and p styles will also be nested within these specific section classes.
+
+.sectionTitle { // This class is applied directly to <h2> elements in JSX, so it's pure
+  font-size: 2.2rem;
+  color: $primary-color;
+  margin-bottom: $spacing-unit * 6 !important; // More space for section titles
+  font-family: $font-family-serif;
+  text-align: center; // Ensure section titles are centered
+
+  @include responsive("md") {
+    font-size: 2.8rem;
+  }
+}
+
+// Hero Section (already well-scoped)
+.heroSection {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: $text-color-light;
+  position: relative;
+  padding: ($spacing-unit * 5) ($spacing-unit * 2);
+  background: linear-gradient(45deg, lighten($primary-color, 10%), darken($primary-color, 10%), $secondary-color);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+
+  @include responsive("md") {
+    min-height: 100vh;
+  }
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: 2.8rem;
+  font-family: $font-family-serif;
+  margin-bottom: $spacing-unit * 3;
+  color: $text-color-light;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+
+  @include responsive("md") {
+    font-size: 4rem;
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: $spacing-unit * 5;
+  color: rgba($text-color-light, 0.9);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include responsive("md") {
+    font-size: 1.5rem;
+  }
+}
+
+.heroCta {
+  padding: ($spacing-unit * 2) ($spacing-unit * 5) !important;
+  font-size: 1.1rem !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+  }
+}
+
+// Intro Section
+.introSection {
+  padding: ($spacing-unit * 8) 0; // Common section padding
+  text-align: center; // Common section text-align
+  background-color: $background-color;
+
+  @include responsive("md") {
+    padding: ($spacing-unit * 10) 0;
+  }
+
+  // Scoped h2 for introSection - this uses the .sectionTitle class applied in JSX
+  // If you had an h2 without .sectionTitle, it would be:
+  // h2 { /* specific styles or extend common styles */ }
+
+  // Scoped p for introSection
+  p {
+    font-size: 1.1rem;
+    color: $dark-gray;
+    max-width: 700px;
+    margin: 0 auto ($spacing-unit * 4) auto;
+    line-height: 1.7;
+  }
+}
+
+// Features Section
+.featuresSection {
+  padding: ($spacing-unit * 8) 0; // Common section padding
+  text-align: center; // Common section text-align
+  background-color: $light-gray;
+
+  @include responsive("md") {
+    padding: ($spacing-unit * 10) 0;
+  }
+  // h2 in featuresSection uses .sectionTitle class from JSX
+
+  // p within feature cards are handled by .featureCard p below
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-unit * 4;
+
+  @include responsive("sm") {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include responsive("lg") {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.featureCard {
+  background-color: $background-color;
+  padding: $spacing-unit * 4;
+  border-radius: $spacing-unit * 1.5;
+  box-shadow: 0 5px 20px rgba($dark-gray, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center; // Ensure card content is centered
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba($dark-gray, 0.12);
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: $primary-color;
+    margin-top: $spacing-unit * 2;
+    margin-bottom: $spacing-unit * 1.5;
+  }
+
+  p { // Scoped p for featureCard
+    font-size: 1rem;
+    color: $dark-gray;
+    margin-bottom: $spacing-unit * 3;
+    min-height: 60px;
+  }
+
+  .featureLink {
+    color: $primary-color;
+    font-weight: bold;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+      color: darken($primary-color, 10%);
+    }
+  }
+}
+
+// Why Choose Us Section
+.whyChooseUsSection {
+  padding: ($spacing-unit * 8) 0; // Common section padding
+  text-align: center; // Common section text-align
+  background-color: $background-color;
+
+  @include responsive("md") {
+    padding: ($spacing-unit * 10) 0;
+  }
+  // h2 in this section uses .sectionTitle class from JSX
+
+  h4 {
+    font-family: $font-family-serif;
+    color: $primary-color;
+    font-size: 1.3rem;
+    margin-bottom: $spacing-unit;
+  }
+  p { // Scoped p for whyChooseUsSection items
+    font-size: 1rem;
+    color: $dark-gray; // Ensuring this is set, as it was in the global section p
+    line-height: 1.7; // Ensuring this is set
+    max-width: none; // Reset max-width if it was set globally for p, allow grid to control
+    margin-bottom: 0; // Reset margin from global p
+  }
+}
+.whyChooseGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-unit * 4;
+    text-align: left;
+    max-width: 900px;
+    margin: 0 auto; // Center the grid itself
+
+    @include responsive("md") {
+        grid-template-columns: repeat(3, 1fr);
+        text-align: center;
+    }
+
+    > div {
+        padding: $spacing-unit * 2;
+        border-radius: $spacing-unit;
+    }
+}
+
+
+// Final CTA Section
+.finalCtaSection {
+  padding: ($spacing-unit * 8) 0; // Common section padding
+  text-align: center; // Common section text-align
+  background-color: darken($primary-color, 5%);
+  color: $text-color-light;
+
+  @include responsive("md") {
+    padding: ($spacing-unit * 10) 0;
+  }
+
+  h2 { // Scoped h2 for finalCtaSection
+    font-size: 2.2rem; // Restoring from old global section h2
+    font-family: $font-family-serif; // Restoring from old global section h2
+    color: $text-color-light; // Override default h2 color
+    margin-bottom: $spacing-unit * 2; // Restoring from old global section h2
+
+    @include responsive("md") {
+      font-size: 2.8rem; // Restoring from old global section h2
+    }
+  }
+  p { // Scoped p for finalCtaSection
+    font-size: 1.1rem; // Restoring from old global section p
+    color: rgba($text-color-light, 0.85);
+    max-width: 700px; // Restoring from old global section p
+    margin: 0 auto ($spacing-unit * 4) auto; // Restoring from old global section p
+    line-height: 1.7; // Restoring from old global section p
+  }
+}

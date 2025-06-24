@@ -166,3 +166,196 @@ a.secondary {
     filter: invert();
   }
 }
+
+.heroWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+}
+
+.heroMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.heroIcon {
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1a202c;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+}
+
+.ctaButton {
+  background: #6366f1;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.9rem 2.2rem;
+  border-radius: 2rem;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  text-decoration: none;
+  display: inline-block;
+}
+.ctaButton:hover {
+  background: #4f46e5;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.16);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.heroFooter {
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+  .ctaButton {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+.animatedText {
+  min-height: 2.2rem;
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.animatedTextInner {
+  font-size: 1.15rem;
+  color: #6366f1;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  animation: fadeInText 0.7s;
+  white-space: nowrap;
+}
+@keyframes fadeInText {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ctaPrimary {
+  background: #6366f1;
+  color: #fff;
+  margin-left: 12px;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.ctaPrimary:hover {
+  background: #4f46e5;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.16);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.featuresSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 3.5rem auto;
+  padding: 3.5rem 1.5rem 2.5rem 1.5rem;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ef 100%);
+  border-radius: 2rem;
+  box-shadow: 0 4px 32px rgba(99,102,241,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.featuresTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6366f1;
+  margin-bottom: 2.2rem;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2.2rem;
+  width: 100%;
+}
+.featureCard {
+  background: #fff;
+  border-radius: 1.3rem;
+  box-shadow: 0 2px 16px rgba(99,102,241,0.08);
+  padding: 2.2rem 1.5rem 1.7rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+}
+.featureCard:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(99,102,241,0.16);
+}
+.featureIcon {
+  background: #eef2ff;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.1rem;
+  font-size: 2rem;
+  color: #6366f1;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+}
+.featureHeading {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.7rem;
+}
+.featureText {
+  font-size: 1.02rem;
+  color: #4a5568;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .featuresSection {
+    padding: 2rem 0.5rem 1.5rem 0.5rem;
+  }
+}

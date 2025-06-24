@@ -1,0 +1,118 @@
+
+@import './variables.scss';
+@import './mixins.scss';
+
+.header {
+  background-color: $background-color; 
+  background: #FFF;
+  padding: ($spacing-unit * 2) 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000; 
+  width: 100%;
+
+  .container {
+    width: 90%;
+    max-width: 1200px; // Consistent with global container or specific to header
+    margin: 0 auto;
+    @include flex-center(row, space-between, center);
+    padding: 0 $spacing-unit * 2;
+  }
+}
+
+.logo {
+  a {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: $primary-color; // Or $text-color-light if header bg is dark
+    text-decoration: none;
+    font-family: $font-family-serif;
+
+    &:hover {
+      color: darken($primary-color, 10%);
+    }
+  }
+}
+
+.nav {
+  @include flex-center;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    @include flex-center;
+  }
+
+  li {
+    margin-left: $spacing-unit * 3;
+  }
+
+  a {
+    text-decoration: none;
+    color: $text-color; // Or $text-color-light if header bg is dark
+    font-weight: 500;
+    padding: ($spacing-unit) ($spacing-unit * 1.5);
+    border-radius: $spacing-unit / 2;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &.active { // You'll need logic in JS to set 'active' class
+      color: $primary-color;
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+}
+
+// Basic mobile menu toggle - actual functionality requires JS
+.menuToggle {
+  display: none; // Hidden on desktop
+  @include button-reset;
+  font-size: 1.5rem;
+  color: $primary-color;
+
+  @include responsive("md") { // Or your chosen breakpoint for mobile
+    // Example: show toggle below md
+  }
+}
+
+// Basic responsive navigation for mobile
+@media (max-width: $breakpoint-md) {
+  .nav {
+    // Example: hide nav links, to be shown in a dropdown/off-canvas menu
+    // display: none; 
+    // For simplicity now, let's just stack them
+    ul {
+      flex-direction: column;
+      align-items: flex-start; // Or center
+      position: absolute;
+      top: 100%; // Below the header
+      left: 0;
+      width: 100%;
+      background-color: lighten($background-color, 2%);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: $spacing-unit * 2;
+      display: none; // Initially hidden, toggled by JS
+    }
+
+    &.open ul { // Class to be added by JS
+        display: flex;
+    }
+
+    li {
+      margin-left: 0;
+      margin-bottom: $spacing-unit;
+      width: 100%;
+    }
+
+    a {
+        display: block; // Make links take full width
+        width: 100%;
+    }
+  }
+
+  .menuToggle {
+    display: block;
+  }
+}
