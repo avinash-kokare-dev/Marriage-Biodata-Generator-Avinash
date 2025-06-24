@@ -15,7 +15,6 @@ const navLinks: NavLink[] = [
   { href: '/biodata', label: 'Biodata Creator' },
   { href: '/pool', label: 'Marriage Pool' },
   { href: '/invitations', label: 'Invitations' },
-  { href: '/auth/login', label: 'Login' }, // Example auth link
 ];
 
 const Header: React.FC = () => {
@@ -50,6 +49,9 @@ const Header: React.FC = () => {
               </li>
             ))}
           </ul>
+          <Link href="/auth" className={styles.authButton}>
+            Login / Sign Up
+          </Link>
         </nav>
         <button className={styles.menuToggle} onClick={toggleNav} aria-label="Toggle navigation">
           {/* Simple hamburger icon, consider using an SVG icon library */}

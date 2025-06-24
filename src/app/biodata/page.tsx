@@ -516,6 +516,21 @@ export default function BiodataPage() {
             <h2 className={styles.templateName}>Marriage Biodata</h2>
             <p className={styles.templateDetails}>Template: {templateOptions.find(t => t.key === selectedTemplate)?.label}</p>
           </div>
+          
+          {/* Corner decoration based on template */}
+          {selectedTemplate === 'elegant' && (
+            <div className={styles.cornerDecoration}>✦</div>
+          )}
+          {selectedTemplate === 'royal' && (
+            <div className={styles.cornerDecoration}>⚜</div>
+          )}
+          {selectedTemplate === 'modern' && (
+            <div className={styles.cornerDecoration}>●</div>
+          )}
+          {selectedTemplate === 'traditional' && (
+            <div className={styles.cornerDecoration}>❀</div>
+          )}
+
           {selectedGodImage && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.7rem' }}>
               <img
