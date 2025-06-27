@@ -28,6 +28,12 @@ const defaultProfessionalFields = [
   { id: "income", label: "Income", value: "", type: "text" },
   { id: "aboutMe", label: "About Me", value: "", type: "textarea" },
 ];
+const defaultFamilyFields = [
+  { id: "fatherName", label: "Father's Name", value: "", type: "text", expanded: true },
+  { id: "motherName", label: "Mother's Name", value: "", type: "text", expanded: true },
+  { id: "brotherName", label: "Brother's Name", value: "", type: "text", expanded: true },
+  { id: "sisterName", label: "Sister's Name", value: "", type: "text", expanded: true },
+];
 
 const sectionConfigs = [
   {
@@ -48,9 +54,15 @@ const sectionConfigs = [
     stateKey: "professionalFields",
     defaultFields: defaultProfessionalFields,
   },
+  {
+    key: "family",
+    title: "\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC66 Family Details",
+    stateKey: "familyFields",
+    defaultFields: defaultFamilyFields,
+  },
 ];
 
-type SectionKey = "personalFields" | "contactFields" | "professionalFields";
+type SectionKey = "personalFields" | "contactFields" | "professionalFields" | "familyFields";
 
 // Helper function to reorder an array
 function reorderList(list: any[], startIndex: number, endIndex: number) {
@@ -86,12 +98,21 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
+// Add section expand/collapse state
+const defaultSectionExpandState: Record<string, boolean> = {
+  personal: true,
+  contact: true,
+  professional: true,
+  family: true,
+};
+
 export default function BiodataPage() {
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [personalFields, setPersonalFields] = useState(defaultPersonalFields);
   const [contactFields, setContactFields] = useState(defaultContactFields);
   const [professionalFields, setProfessionalFields] = useState(defaultProfessionalFields);
+  const [familyFields, setFamilyFields] = useState(defaultFamilyFields);
   const [godImage, setGodImage] = useState<File | null>(null);
   const [godImageUrl, setGodImageUrl] = useState<string | null>(null);
   const [godName, setGodName] = useState("");
@@ -99,16 +120,19 @@ export default function BiodataPage() {
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [sectionExpand, setSectionExpand] = useState<Record<string, boolean>>(defaultSectionExpandState);
 
   const sectionState: Record<SectionKey, any[]> = {
     personalFields,
     contactFields,
     professionalFields,
+    familyFields,
   };
   const setSectionState: Record<SectionKey, React.Dispatch<React.SetStateAction<any[]>>> = {
     personalFields: setPersonalFields,
     contactFields: setContactFields,
     professionalFields: setProfessionalFields,
+    familyFields: setFamilyFields,
   };
 
   // LocalStorage keys
@@ -121,6 +145,7 @@ export default function BiodataPage() {
       personalFields,
       contactFields,
       professionalFields,
+      familyFields,
       godImageUrl,
       selectedGodImage,
       godName,
@@ -128,7 +153,7 @@ export default function BiodataPage() {
     };
     console.log('Saving to localStorage:', data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [profilePicUrl, personalFields, contactFields, professionalFields, godImageUrl, selectedGodImage, godName, selectedTemplate]);
+  }, [profilePicUrl, personalFields, contactFields, professionalFields, familyFields, godImageUrl, selectedGodImage, godName, selectedTemplate]);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -142,6 +167,7 @@ export default function BiodataPage() {
         if (parsed.personalFields) setPersonalFields(parsed.personalFields);
         if (parsed.contactFields) setContactFields(parsed.contactFields);
         if (parsed.professionalFields) setProfessionalFields(parsed.professionalFields);
+        if (parsed.familyFields) setFamilyFields(parsed.familyFields);
         if (parsed.godImageUrl) setGodImageUrl(parsed.godImageUrl);
         if (parsed.selectedGodImage) setSelectedGodImage(parsed.selectedGodImage);
         if (parsed.godName) setGodName(parsed.godName);
@@ -158,6 +184,7 @@ export default function BiodataPage() {
     setPersonalFields(defaultPersonalFields);
     setContactFields(defaultContactFields);
     setProfessionalFields(defaultProfessionalFields);
+    setFamilyFields(defaultFamilyFields);
     setGodImage(null);
     setGodImageUrl(null);
     setSelectedGodImage(null);
@@ -211,6 +238,7 @@ export default function BiodataPage() {
       label: "New Field",
       value: "",
       type: "text",
+      expanded: true,
     };
     setSectionState[sectionKey]((prev) => [...prev, newField]);
   };
@@ -238,6 +266,15 @@ export default function BiodataPage() {
     });
   };
 
+  // Field Expand/Collapse Handler
+  const handleToggleExpand = (sectionKey: SectionKey, idx: number) => {
+    setSectionState[sectionKey]((prev) => {
+      const updated = [...prev];
+      updated[idx] = { ...updated[idx], expanded: !updated[idx].expanded };
+      return updated;
+    });
+  };
+
   // Update onDragEnd to handle reordering
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -249,6 +286,7 @@ export default function BiodataPage() {
       personal: "personalFields",
       contact: "contactFields",
       professional: "professionalFields",
+      family: "familyFields",
     } as const;
     const sourceSectionKey = droppableIdToSectionKey[source.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
     const destSectionKey = droppableIdToSectionKey[destination.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
@@ -270,6 +308,11 @@ export default function BiodataPage() {
         return sourceList;
       });
     }
+  };
+
+  // Section expand/collapse handler
+  const handleToggleSectionExpand = (sectionKey: string) => {
+    setSectionExpand(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }));
   };
 
   const handleDownload = async () => {
@@ -436,39 +479,53 @@ export default function BiodataPage() {
           <DragDropContext onDragEnd={onDragEnd}>
             {sectionConfigs.map(section => (
               <section className={styles.formSection} key={section.key}>
-                <div className={styles.sectionHeader}>{section.title}</div>
-                <Droppable droppableId={section.key}>
-                  {(provided: DroppableProvided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
-                      {sectionState[section.stateKey as SectionKey].map((field: any, idx: number) => (
-                        <Draggable key={field.id} draggableId={field.id} index={idx}>
-                          {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              style={provided.draggableProps.style}
-                            >
-                              <Field
-                                label={field.label}
-                                value={field.value}
-                                type={field.type}
-                                onChange={val => handleFieldChange(section.stateKey as SectionKey, idx, val)}
-                                onDelete={() => handleFieldDelete(section.stateKey as SectionKey, idx)}
-                                onLabelEdit={label => handleFieldLabelEdit(section.stateKey as SectionKey, idx, label)}
-                                dragHandleProps={provided.dragHandleProps}
-                                className={snapshot.isDragging ? styles.dragging : ''}
-                              />
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-                <button className={styles.addFieldBtn} onClick={() => handleAddField(section.stateKey as SectionKey)}>
-                  <FaPlus style={{ marginRight: 6 }} /> Add Field
-                </button>
+                <div className={styles.sectionHeader}>
+                  <button
+                    type="button"
+                    className={styles.sectionToggleBtn}
+                    onClick={() => handleToggleSectionExpand(section.key)}
+                    aria-label={sectionExpand[section.key] ? 'Collapse section' : 'Expand section'}
+                  >
+                    {sectionExpand[section.key] ? '▼' : '►'}
+                  </button>
+                  <span>{section.title}</span>
+                </div>
+                {sectionExpand[section.key] && (
+                  <>
+                    <Droppable droppableId={section.key}>
+                      {(provided: DroppableProvided) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps}>
+                          {sectionState[section.stateKey as SectionKey].map((field: any, idx: number) => (
+                            <Draggable key={field.id} draggableId={field.id} index={idx}>
+                              {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  style={provided.draggableProps.style}
+                                >
+                                  <Field
+                                    label={field.label}
+                                    value={field.value}
+                                    type={field.type}
+                                    onChange={val => handleFieldChange(section.stateKey as SectionKey, idx, val)}
+                                    onDelete={() => handleFieldDelete(section.stateKey as SectionKey, idx)}
+                                    onLabelEdit={label => handleFieldLabelEdit(section.stateKey as SectionKey, idx, label)}
+                                    dragHandleProps={provided.dragHandleProps}
+                                    className={snapshot.isDragging ? styles.dragging : ''}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                    <button className={styles.addFieldBtn} onClick={() => handleAddField(section.stateKey as SectionKey)}>
+                      <FaPlus style={{ marginRight: 6 }} /> Add Field
+                    </button>
+                  </>
+                )}
               </section>
             ))}
           </DragDropContext>
