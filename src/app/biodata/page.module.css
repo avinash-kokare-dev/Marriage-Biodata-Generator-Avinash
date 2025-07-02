@@ -661,7 +661,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .modal {
@@ -673,6 +673,13 @@
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2100;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 3rem;
 }
 
 .modal h3 {
@@ -684,8 +691,8 @@
 
 .templateGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   margin-bottom: 1.5rem;
 }
 
@@ -747,20 +754,29 @@
   font-size: 0.875rem;
 }
 
-.closeButton {
-  width: 100%;
-  padding: 0.75rem;
-  background: #6366f1;
-  color: white;
+.modalCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 2rem;
+  background: none;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  color: #6366f1;
   cursor: pointer;
-  transition: background 0.3s ease;
+  z-index: 2;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 50%;
+  transition: background 0.15s, color 0.15s;
+}
+.modalCloseBtn:hover, .modalCloseBtn:focus {
+  background: #dbeafe;
+  color: #4338ca;
+  outline: none;
 }
 
-.closeButton:hover {
-  background: #5855eb;
+.closeButton {
+  display: none;
 }
 
 @media (max-width: 768px) {

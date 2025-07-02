@@ -12,7 +12,7 @@ import jsPDF from 'jspdf';
 const defaultPersonalFields = [
   { id: "fullName", label: "Full Name", value: "", type: "text" },
   { id: "gender", label: "Gender", value: "", type: "select", options: ["Male", "Female", "Other"] },
-  { id: "dob", label: "Date of Birth", value: "", type: "date" },
+  { id: "dob", label: "Date of Birth", value: "", type: "datetime-local" },
   { id: "height", label: "Height", value: "", type: "text" },
   { id: "religion", label: "Religion", value: "", type: "text" },
   { id: "caste", label: "Caste", value: "", type: "text" },
@@ -26,13 +26,18 @@ const defaultProfessionalFields = [
   { id: "education", label: "Education", value: "", type: "text" },
   { id: "occupation", label: "Occupation", value: "", type: "text" },
   { id: "income", label: "Income", value: "", type: "text" },
-  { id: "aboutMe", label: "About Me", value: "", type: "textarea" },
+  { id: "hobbies", label: "Hobbies", value: "", type: "text" },
 ];
 const defaultFamilyFields = [
-  { id: "fatherName", label: "Father's Name", value: "", type: "text", expanded: true },
-  { id: "motherName", label: "Mother's Name", value: "", type: "text", expanded: true },
-  { id: "brotherName", label: "Brother's Name", value: "", type: "text", expanded: true },
-  { id: "sisterName", label: "Sister's Name", value: "", type: "text", expanded: true },
+  { id: "fatherName", label: "Father's Name", value: "", type: "text" },
+  { id: "motherName", label: "Mother's Name", value: "", type: "text" },
+  { id: "brotherName", label: "Brother's Name", value: "", type: "text" },
+  { id: "sisterName", label: "Sister's Name", value: "", type: "text" },
+];
+
+const defaultExtraFields = [
+  { id: "aboutMe", label: "About Me", value: "", type: "text", isAIResponse: true },
+  { id: "partnerPreference", label: "Partner Preference", value: "", type: "text", isAIResponse: true },
 ];
 
 const sectionConfigs = [
@@ -60,9 +65,15 @@ const sectionConfigs = [
     stateKey: "familyFields",
     defaultFields: defaultFamilyFields,
   },
+  {
+    key: "About and Partner Preference",
+    title: "About and Partner Preference",
+    stateKey: "extraFields",
+    defaultFields: defaultExtraFields,
+  },
 ];
 
-type SectionKey = "personalFields" | "contactFields" | "professionalFields" | "familyFields";
+type SectionKey = "personalFields" | "contactFields" | "professionalFields" | "familyFields" | "extraFields";
 
 // Helper function to reorder an array
 function reorderList(list: any[], startIndex: number, endIndex: number) {
@@ -104,6 +115,7 @@ const defaultSectionExpandState: Record<string, boolean> = {
   contact: true,
   professional: true,
   family: true,
+  extra: true,
 };
 
 export default function BiodataPage() {
@@ -113,6 +125,7 @@ export default function BiodataPage() {
   const [contactFields, setContactFields] = useState(defaultContactFields);
   const [professionalFields, setProfessionalFields] = useState(defaultProfessionalFields);
   const [familyFields, setFamilyFields] = useState(defaultFamilyFields);
+  const [extraFields, setExtraFields] = useState(defaultExtraFields);
   const [godImage, setGodImage] = useState<File | null>(null);
   const [godImageUrl, setGodImageUrl] = useState<string | null>(null);
   const [godName, setGodName] = useState("");
@@ -127,12 +140,15 @@ export default function BiodataPage() {
     contactFields,
     professionalFields,
     familyFields,
+    extraFields,
   };
+  console.log(sectionState);
   const setSectionState: Record<SectionKey, React.Dispatch<React.SetStateAction<any[]>>> = {
     personalFields: setPersonalFields,
     contactFields: setContactFields,
     professionalFields: setProfessionalFields,
     familyFields: setFamilyFields,
+    extraFields: setExtraFields,
   };
 
   // LocalStorage keys
@@ -151,9 +167,8 @@ export default function BiodataPage() {
       godName,
       selectedTemplate,
     };
-    console.log('Saving to localStorage:', data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [profilePicUrl, personalFields, contactFields, professionalFields, familyFields, godImageUrl, selectedGodImage, godName, selectedTemplate]);
+  }, [profilePicUrl, personalFields, contactFields, professionalFields, familyFields, extraFields, godImageUrl, selectedGodImage, godName, selectedTemplate]);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -185,6 +200,7 @@ export default function BiodataPage() {
     setContactFields(defaultContactFields);
     setProfessionalFields(defaultProfessionalFields);
     setFamilyFields(defaultFamilyFields);
+    setExtraFields(defaultExtraFields);
     setGodImage(null);
     setGodImageUrl(null);
     setSelectedGodImage(null);
@@ -238,7 +254,6 @@ export default function BiodataPage() {
       label: "New Field",
       value: "",
       type: "text",
-      expanded: true,
     };
     setSectionState[sectionKey]((prev) => [...prev, newField]);
   };
@@ -266,15 +281,6 @@ export default function BiodataPage() {
     });
   };
 
-  // Field Expand/Collapse Handler
-  const handleToggleExpand = (sectionKey: SectionKey, idx: number) => {
-    setSectionState[sectionKey]((prev) => {
-      const updated = [...prev];
-      updated[idx] = { ...updated[idx], expanded: !updated[idx].expanded };
-      return updated;
-    });
-  };
-
   // Update onDragEnd to handle reordering
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -287,6 +293,7 @@ export default function BiodataPage() {
       contact: "contactFields",
       professional: "professionalFields",
       family: "familyFields",
+      extra: "extraFields",
     } as const;
     const sourceSectionKey = droppableIdToSectionKey[source.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
     const destSectionKey = droppableIdToSectionKey[destination.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
@@ -408,6 +415,31 @@ export default function BiodataPage() {
       setIsGeneratingPDF(false);
     }
   };
+
+  const callAI = async () => {
+    const response = await fetch("/api/generate-suggestion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        // name: defaultPersonalFields.find(field => field.id === "fullName")?.value,
+        // age: defaultPersonalFields.find(field => field.id === "dob")?.value,
+        // profession: defaultProfessionalFields.find(field => field.id === "occupation")?.value,
+        // education: defaultProfessionalFields.find(field => field.id === "education")?.value,
+        // location: "Pune",
+        // hobbies: defaultPersonalFields.find(field => field.id === "hobbies")?.value,
+        name: 'Avinash',
+        age: 26,
+        profession: 'Software Engineer',
+        education: 'B.E. Computer Science',
+        location: 'Mumbai',
+        hobbies: 'Cricket, Reading, Travelling',
+      })
+    });
+    
+    const data = await response.json();
+    console.log(data.aboutMe);
+    
+  }
 
   return (
     <div className={styles.biodataWrapper}>
@@ -533,6 +565,15 @@ export default function BiodataPage() {
         {showTemplateModal && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
+              <button
+                className={styles.modalCloseBtn}
+                onClick={() => setShowTemplateModal(false)}
+                aria-label="Close"
+                type="button"
+                style={{ position: 'absolute', top: 16, right: 20, fontSize: 28, background: 'none', border: 'none', color: '#6366f1', cursor: 'pointer', zIndex: 2 }}
+              >
+                ×
+              </button>
               <h3>Choose Template</h3>
               <div className={styles.templateGrid}>
                 {templateOptions.map((template) => (
@@ -557,12 +598,6 @@ export default function BiodataPage() {
                   </div>
                 ))}
               </div>
-              <button
-                className={styles.closeButton}
-                onClick={() => setShowTemplateModal(false)}
-              >
-                Close
-              </button>
             </div>
           </div>
         )}
@@ -600,7 +635,8 @@ export default function BiodataPage() {
           {godName && (
             <div style={{ textAlign: 'center', color: '#6366f1', fontWeight: 700, fontSize: '1.15rem', marginBottom: '0.7rem', letterSpacing: '0.02em' }}>{godName}</div>
           )}
-          <h2 style={{ textAlign: 'center', color: '#6366f1', marginBottom: '1.5rem' }}>Biodata Preview</h2>
+
+          <button onClick={() => callAI()}>Click</button>
 
           {profilePicUrl && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.2rem' }}>
