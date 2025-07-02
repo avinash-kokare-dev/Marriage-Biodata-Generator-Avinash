@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { FaTrash, FaGripVertical, FaMagic } from "react-icons/fa";
+import { FaTrash, FaGripVertical, FaMagic, FaBrain } from "react-icons/fa";
 import styles from "./Field.module.css";
+import { SectionKey } from "@/interface/types";
 
 interface FieldProps {
   label: string;
@@ -13,6 +14,8 @@ interface FieldProps {
   dragHandleProps?: any;
   onAIGenerate?: () => void;
   className?: string;
+  isAIResponse?: boolean;
+  generateAIResponse?: () => void;
 }
 
 export default function Field({
@@ -26,6 +29,8 @@ export default function Field({
   dragHandleProps,
   onAIGenerate,
   className,
+  isAIResponse,
+  generateAIResponse
 }: FieldProps) {
   const [editingLabel, setEditingLabel] = useState(false);
   const [labelValue, setLabelValue] = useState(label);
@@ -38,16 +43,24 @@ export default function Field({
 
   return (
     <div className={`${styles.field}${className ? ' ' + className : ''}`} {...draggableProps}>
-      <button
+      {isAIResponse ? <button
         type="button"
         className={styles.dragHandleBtn}
         title="Drag to reorder"
         tabIndex={0}
         aria-label="Drag to reorder"
-        {...dragHandleProps}
+        onClick={generateAIResponse}
+      >
+        <FaBrain />
+      </button> : <button
+        type="button"
+        className={styles.dragHandleBtn}
+        title="Drag to reorder"
+        tabIndex={0}
+        aria-label="Drag to reorder"
       >
         <FaGripVertical />
-      </button>
+      </button>}
       <div className={styles.labelWrapper}>
         {editingLabel ? (
           <input

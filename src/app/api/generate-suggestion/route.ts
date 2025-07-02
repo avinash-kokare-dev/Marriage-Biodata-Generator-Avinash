@@ -31,6 +31,7 @@ function calculateAge(birthdate: string): number {
 }
 
 function getPromptAndConfig(sectionType: SectionType, input: BiodataInput) {
+  console.log("Prompt : ", sectionType)
   const age = calculateAge(input.birthdate);
   const commonInfo = `
 - Full Name: ${input.name}

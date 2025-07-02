@@ -166,6 +166,7 @@ export default function BiodataPage() {
 
   // Field Label Edit Handler
   const handleFieldLabelEdit = (sectionKey: SectionKey, idx: number, label: string) => {
+    console.log("Section key : ", sectionKey)
     setSectionState[sectionKey]((prev) => {
       const updated = [...prev];
       updated[idx] = { ...updated[idx], label };
@@ -308,7 +309,7 @@ export default function BiodataPage() {
     }
   };
 
-  const callAI = async (sectionKey: SectionKey, fieldKey: string) => {
+  const generateAIResponse = async (sectionKey: SectionKey, fieldKey: string) => {
     const response = await fetch("/api/generate-suggestion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -451,8 +452,9 @@ export default function BiodataPage() {
                                     onLabelEdit={label => handleFieldLabelEdit(section.stateKey as SectionKey, idx, label)}
                                     dragHandleProps={provided.dragHandleProps}
                                     className={snapshot.isDragging ? styles.dragging : ''}
+                                    isAIResponse={field.isAIResponse}
+                                    generateAIResponse={() => generateAIResponse(section.stateKey as SectionKey, field.id)}
                                   />
-                                  {field.isAIResponse && <button onClick={() => callAI(section.stateKey as SectionKey, field.id)}>Click Me</button>}
                                 </div>
                               )}
                             </Draggable>
@@ -543,8 +545,6 @@ export default function BiodataPage() {
           {godName && (
             <div style={{ textAlign: 'center', color: '#6366f1', fontWeight: 700, fontSize: '1.15rem', marginBottom: '0.7rem', letterSpacing: '0.02em' }}>{godName}</div>
           )}
-
-          <button onClick={() => callAI()}>Click</button>
 
           {profilePicUrl && (
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.2rem' }}>
