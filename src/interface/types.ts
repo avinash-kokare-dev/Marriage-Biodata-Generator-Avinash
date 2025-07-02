@@ -1,0 +1,1 @@
+export type SectionKey = "personalFields" | "contactFields" | "professionalFields" | "familyFields" | "extraFields";

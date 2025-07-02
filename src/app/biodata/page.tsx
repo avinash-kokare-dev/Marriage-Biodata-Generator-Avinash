@@ -8,115 +8,10 @@ import { FaPlus } from "react-icons/fa";
 import type { DraggableProvided, DraggableStateSnapshot, DroppableProvided } from "react-beautiful-dnd";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-
-const defaultPersonalFields = [
-  { id: "fullName", label: "Full Name", value: "", type: "text" },
-  { id: "gender", label: "Gender", value: "", type: "select", options: ["Male", "Female", "Other"] },
-  { id: "dob", label: "Date of Birth", value: "", type: "datetime-local" },
-  { id: "height", label: "Height", value: "", type: "text" },
-  { id: "religion", label: "Religion", value: "", type: "text" },
-  { id: "caste", label: "Caste", value: "", type: "text" },
-];
-const defaultContactFields = [
-  { id: "phone", label: "Phone", value: "", type: "text" },
-  { id: "email", label: "Email", value: "", type: "email" },
-  { id: "address", label: "Address", value: "", type: "text" },
-];
-const defaultProfessionalFields = [
-  { id: "education", label: "Education", value: "", type: "text" },
-  { id: "occupation", label: "Occupation", value: "", type: "text" },
-  { id: "income", label: "Income", value: "", type: "text" },
-  { id: "hobbies", label: "Hobbies", value: "", type: "text" },
-];
-const defaultFamilyFields = [
-  { id: "fatherName", label: "Father's Name", value: "", type: "text" },
-  { id: "motherName", label: "Mother's Name", value: "", type: "text" },
-  { id: "brotherName", label: "Brother's Name", value: "", type: "text" },
-  { id: "sisterName", label: "Sister's Name", value: "", type: "text" },
-];
-
-const defaultExtraFields = [
-  { id: "aboutMe", label: "About Me", value: "", type: "text", isAIResponse: true },
-  { id: "partnerPreference", label: "Partner Preference", value: "", type: "text", isAIResponse: true },
-];
-
-const sectionConfigs = [
-  {
-    key: "personal",
-    title: "\uD83D\uDC64 Personal Details",
-    stateKey: "personalFields",
-    defaultFields: defaultPersonalFields,
-  },
-  {
-    key: "contact",
-    title: "\uD83D\uDCDE Contact Details",
-    stateKey: "contactFields",
-    defaultFields: defaultContactFields,
-  },
-  {
-    key: "professional",
-    title: "\uD83D\uDCBC Professional Details",
-    stateKey: "professionalFields",
-    defaultFields: defaultProfessionalFields,
-  },
-  {
-    key: "family",
-    title: "\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC66 Family Details",
-    stateKey: "familyFields",
-    defaultFields: defaultFamilyFields,
-  },
-  {
-    key: "About and Partner Preference",
-    title: "About and Partner Preference",
-    stateKey: "extraFields",
-    defaultFields: defaultExtraFields,
-  },
-];
-
-type SectionKey = "personalFields" | "contactFields" | "professionalFields" | "familyFields" | "extraFields";
-
-// Helper function to reorder an array
-function reorderList(list: any[], startIndex: number, endIndex: number) {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-}
-
-const defaultGodImages = [
-  "/gods/ganesh.png",
-  "/gods/krishna.png",
-  "/gods/shiva.png",
-  "/gods/durga.png",
-  "/gods/hanuman.png",
-];
-
-const templateOptions = [
-  { key: "classic", label: "Classic", description: "Clean and simple" },
-  { key: "elegant", label: "Elegant Gold", description: "Premium golden theme" },
-  { key: "royal", label: "Royal Maroon", description: "Rich maroon design" },
-  { key: "modern", label: "Modern Blue", description: "Contemporary blue theme" },
-  { key: "traditional", label: "Traditional Red", description: "Traditional red design" },
-];
-
-// Helper to convert File to base64
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// Add section expand/collapse state
-const defaultSectionExpandState: Record<string, boolean> = {
-  personal: true,
-  contact: true,
-  professional: true,
-  family: true,
-  extra: true,
-};
+import { defaultContactFields, defaultExtraFields, defaultFamilyFields, defaultPersonalFields, defaultProfessionalFields, defaultSectionExpandState, sectionConfigs, STORAGE_KEY, templateOptions } from "@/helper/default-configs";
+import { SectionKey } from "@/interface/types";
+import { defaultGodImages } from "@/helper/image-provider";
+import { fileToBase64, reorderList } from "@/helper/helper-functions";
 
 export default function BiodataPage() {
   const [profilePic, setProfilePic] = useState<File | null>(null);
@@ -142,7 +37,6 @@ export default function BiodataPage() {
     familyFields,
     extraFields,
   };
-  console.log(sectionState);
   const setSectionState: Record<SectionKey, React.Dispatch<React.SetStateAction<any[]>>> = {
     personalFields: setPersonalFields,
     contactFields: setContactFields,
@@ -150,9 +44,6 @@ export default function BiodataPage() {
     familyFields: setFamilyFields,
     extraFields: setExtraFields,
   };
-
-  // LocalStorage keys
-  const STORAGE_KEY = "biodataFormData";
 
   // Save to localStorage on any change
   useEffect(() => {
@@ -249,6 +140,7 @@ export default function BiodataPage() {
 
   // Add Field Handler
   const handleAddField = (sectionKey: SectionKey) => {
+    console.log("Section in handle add fiedl : ", sectionKey)
     const newField = {
       id: `custom_${Date.now()}`,
       label: "New Field",
@@ -293,7 +185,7 @@ export default function BiodataPage() {
       contact: "contactFields",
       professional: "professionalFields",
       family: "familyFields",
-      extra: "extraFields",
+      extraFields: "extraFields",
     } as const;
     const sourceSectionKey = droppableIdToSectionKey[source.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
     const destSectionKey = droppableIdToSectionKey[destination.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
@@ -324,13 +216,13 @@ export default function BiodataPage() {
 
   const handleDownload = async () => {
     if (isGeneratingPDF) return;
-    
+
     setIsGeneratingPDF(true);
-    
+
     try {
       // Get the preview element
       const previewElement = document.querySelector(`.${styles.preview}`) as HTMLElement;
-      
+
       if (!previewElement) {
         alert('Preview element not found');
         return;
@@ -350,7 +242,7 @@ export default function BiodataPage() {
       clone.style.margin = '0';
       clone.style.backgroundColor = 'white';
       clone.setAttribute('data-pdf', 'true');
-      
+
       // Add to DOM temporarily
       document.body.appendChild(clone);
 
@@ -384,7 +276,7 @@ export default function BiodataPage() {
       // Create PDF
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      
+
       const imgWidth = 210; // A4 width in mm
       const pageHeight = 295; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -416,7 +308,7 @@ export default function BiodataPage() {
     }
   };
 
-  const callAI = async () => {
+  const callAI = async (sectionKey: SectionKey, fieldKey: string) => {
     const response = await fetch("/api/generate-suggestion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -433,12 +325,27 @@ export default function BiodataPage() {
         education: 'B.E. Computer Science',
         location: 'Mumbai',
         hobbies: 'Cricket, Reading, Travelling',
+        birthdate: '19-10-1999',
+        sectionType: sectionKey
       })
     });
-    
+
     const data = await response.json();
-    console.log(data.aboutMe);
-    
+
+    if (data && sectionKey in setSectionState) {
+      const setter = setSectionState[sectionKey as SectionKey];
+
+      setter((prev) => {
+        return prev.map((field) => {
+          if (field.id === fieldKey) {
+            return { ...field, value: data };
+          }
+          return field;
+        });
+      });
+    }
+
+
   }
 
   return (
@@ -545,6 +452,7 @@ export default function BiodataPage() {
                                     dragHandleProps={provided.dragHandleProps}
                                     className={snapshot.isDragging ? styles.dragging : ''}
                                   />
+                                  {field.isAIResponse && <button onClick={() => callAI(section.stateKey as SectionKey, field.id)}>Click Me</button>}
                                 </div>
                               )}
                             </Draggable>
@@ -608,7 +516,7 @@ export default function BiodataPage() {
             <h2 className={styles.templateName}>Marriage Biodata</h2>
             <p className={styles.templateDetails}>Template: {templateOptions.find(t => t.key === selectedTemplate)?.label}</p>
           </div>
-          
+
           {/* Corner decoration based on template */}
           {selectedTemplate === 'elegant' && (
             <div className={styles.cornerDecoration}>✦</div>
