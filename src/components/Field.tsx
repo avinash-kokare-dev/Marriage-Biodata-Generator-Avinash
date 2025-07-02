@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FaTrash, FaGripVertical, FaMagic, FaBrain } from "react-icons/fa";
 import styles from "./Field.module.css";
-import { SectionKey } from "@/interface/types";
 
 interface FieldProps {
   label: string;
@@ -10,8 +9,6 @@ interface FieldProps {
   onChange: (value: string) => void;
   onDelete: () => void;
   onLabelEdit: (label: string) => void;
-  draggableProps?: any;
-  dragHandleProps?: any;
   onAIGenerate?: () => void;
   className?: string;
   isAIResponse?: boolean;
@@ -25,8 +22,6 @@ export default function Field({
   onChange,
   onDelete,
   onLabelEdit,
-  draggableProps,
-  dragHandleProps,
   onAIGenerate,
   className,
   isAIResponse,
@@ -42,7 +37,7 @@ export default function Field({
   };
 
   return (
-    <div className={`${styles.field}${className ? ' ' + className : ''}`} {...draggableProps}>
+    <div className={`${styles.field}${className ? ' ' + className : ''}`}>
       {isAIResponse ? <button
         type="button"
         className={styles.dragHandleBtn}

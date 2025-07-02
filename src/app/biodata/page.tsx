@@ -2,10 +2,8 @@
 import styles from "./page.module.css";
 import { useState, useEffect, useCallback } from "react";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import Field from "@/components/Field";
 import { FaPlus } from "react-icons/fa";
-import type { DraggableProvided, DraggableStateSnapshot, DroppableProvided } from "react-beautiful-dnd";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { defaultContactFields, defaultExtraFields, defaultFamilyFields, defaultPersonalFields, defaultProfessionalFields, defaultSectionExpandState, sectionConfigs, STORAGE_KEY, templateOptions } from "@/helper/default-configs";
@@ -416,61 +414,45 @@ export default function BiodataPage() {
         </div>
         <ProfilePictureUpload imageUrl={profilePicUrl} onChange={handleProfilePicChange} />
         <div className={styles.formSections}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            {sectionConfigs.map(section => (
-              <section className={styles.formSection} key={section.key}>
-                <div className={styles.sectionHeader}>
-                  <button
-                    type="button"
-                    className={styles.sectionToggleBtn}
-                    onClick={() => handleToggleSectionExpand(section.key)}
-                    aria-label={sectionExpand[section.key] ? 'Collapse section' : 'Expand section'}
-                  >
-                    {sectionExpand[section.key] ? '▼' : '►'}
+          {sectionConfigs.map(section => (
+            <section className={styles.formSection} key={section.key}>
+              <div className={styles.sectionHeader}>
+                <button
+                  type="button"
+                  className={styles.sectionToggleBtn}
+                  onClick={() => handleToggleSectionExpand(section.key)}
+                  aria-label={sectionExpand[section.key] ? 'Collapse section' : 'Expand section'}
+                >
+                  {sectionExpand[section.key] ? '▼' : '►'}
+                </button>
+                <span>{section.title}</span>
+              </div>
+              {sectionExpand[section.key] && (
+                <>
+                  <div>
+                    {sectionState[section.stateKey as SectionKey].map((field: any, idx: number) => (
+                      <div>
+                        <Field
+                          label={field.label}
+                          value={field.value}
+                          type={field.type}
+                          onChange={val => handleFieldChange(section.stateKey as SectionKey, idx, val)}
+                          onDelete={() => handleFieldDelete(section.stateKey as SectionKey, idx)}
+                          onLabelEdit={label => handleFieldLabelEdit(section.stateKey as SectionKey, idx, label)}
+
+                          isAIResponse={field.isAIResponse}
+                          generateAIResponse={() => generateAIResponse(section.stateKey as SectionKey, field.id)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <button className={styles.addFieldBtn} onClick={() => handleAddField(section.stateKey as SectionKey)}>
+                    <FaPlus style={{ marginRight: 6 }} /> Add Field
                   </button>
-                  <span>{section.title}</span>
-                </div>
-                {sectionExpand[section.key] && (
-                  <>
-                    <Droppable droppableId={section.key}>
-                      {(provided: DroppableProvided) => (
-                        <div ref={provided.innerRef} {...provided.droppableProps}>
-                          {sectionState[section.stateKey as SectionKey].map((field: any, idx: number) => (
-                            <Draggable key={field.id} draggableId={field.id} index={idx}>
-                              {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  style={provided.draggableProps.style}
-                                >
-                                  <Field
-                                    label={field.label}
-                                    value={field.value}
-                                    type={field.type}
-                                    onChange={val => handleFieldChange(section.stateKey as SectionKey, idx, val)}
-                                    onDelete={() => handleFieldDelete(section.stateKey as SectionKey, idx)}
-                                    onLabelEdit={label => handleFieldLabelEdit(section.stateKey as SectionKey, idx, label)}
-                                    dragHandleProps={provided.dragHandleProps}
-                                    className={snapshot.isDragging ? styles.dragging : ''}
-                                    isAIResponse={field.isAIResponse}
-                                    generateAIResponse={() => generateAIResponse(section.stateKey as SectionKey, field.id)}
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                    <button className={styles.addFieldBtn} onClick={() => handleAddField(section.stateKey as SectionKey)}>
-                      <FaPlus style={{ marginRight: 6 }} /> Add Field
-                    </button>
-                  </>
-                )}
-              </section>
-            ))}
-          </DragDropContext>
+                </>
+              )}
+            </section>
+          ))}
         </div>
         {showTemplateModal && (
           <div className={styles.modalOverlay}>
