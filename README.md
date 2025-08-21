@@ -1,4 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Marriage Biodata Creator
+
+An AI-powered platform for creating beautiful, comprehensive marriage biodatas with intelligent suggestions and modern design.
+
+## Features
+
+- **AI-Powered Writing**: Get intelligent suggestions for "About Me" and partner expectations
+- **Modern Design**: Clean, elegant, and professional biodata templates
+- **Live Preview**: See your biodata update in real-time as you edit
+- **Easy Export**: Download your biodata as a beautiful PDF
+- **Step-by-Step Guide**: Comprehensive instructions for creating the perfect biodata
+
+## How to Create Your Marriage Biodata
+
+The platform includes a detailed step-by-step guide that covers:
+
+1. **Personal Information** - Basic details and contact information
+2. **Family Background** - Family structure and cultural background
+3. **Education & Career** - Academic and professional achievements
+4. **Physical Attributes** - Height, build, and distinctive features
+5. **Lifestyle & Interests** - Hobbies, preferences, and personality
+6. **Partner Preferences** - What you're looking for in a partner
+7. **Photos & Documents** - Quality photos and required documents
+8. **Review & Submit** - Final review and submission
+
+Each step includes detailed instructions and pro tips to help you create the best possible biodata.
 
 ## Getting Started
 

@@ -6,6 +6,7 @@ import { FaHeart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import TemplateCarousel from "@/components/TemplateCarousel";
 import HeroSection from "@/components/HeroSection";
+import HowToCreateBiodata from "@/components/HowToCreateBiodata";
 
 const animatedTexts = [
   "AI-powered About Me generator",
@@ -58,6 +59,8 @@ export default function Home() {
       </section>
       {/* Add Template Carousel Section */}
       <TemplateCarousel />
+      {/* Add How to Create Biodata Section */}
+      <HowToCreateBiodata />
     </div>
   );
 }

@@ -7,35 +7,35 @@ const templates = [
     id: 1,
     name: "Classic",
     description: "Clean and simple design",
-    image: "https://via.placeholder.com/400x300/f8fafc/6366f1?text=Classic+Template",
+    image: "./template_1.png",
     features: ["Professional layout", "Easy to read", "Traditional format"]
   },
   {
     id: 2,
     name: "Elegant Gold",
     description: "Premium golden theme",
-    image: "https://via.placeholder.com/400x300/fff9e6/d4af37?text=Elegant+Gold",
+    image: "./template_2.png",
     features: ["Luxury design", "Golden accents", "Premium feel"]
   },
   {
     id: 3,
     name: "Royal Maroon",
     description: "Rich maroon design",
-    image: "https://via.placeholder.com/400x300/2d1b3d/8b0000?text=Royal+Maroon",
+    image: "./template_3.png",
     features: ["Royal appearance", "Deep colors", "Sophisticated look"]
   },
   {
     id: 4,
     name: "Modern Blue",
     description: "Contemporary blue theme",
-    image: "https://via.placeholder.com/400x300/f0f8ff/3b82f6?text=Modern+Blue",
+    image: "./template_4.png",
     features: ["Modern design", "Clean lines", "Professional blue"]
   },
   {
     id: 5,
     name: "Traditional Red",
     description: "Traditional red design",
-    image: "https://via.placeholder.com/400x300/fff5f5/dc2626?text=Traditional+Red",
+    image: "./template_5.png",
     features: ["Traditional style", "Red accents", "Cultural elements"]
   }
 ];

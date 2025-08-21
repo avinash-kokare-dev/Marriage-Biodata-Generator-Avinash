@@ -1,0 +1,385 @@
+@import './variables';
+@import './mixins';
+
+.howToSection {
+  padding: ($spacing-unit * 10) 0;
+  background: linear-gradient(135deg, $light-gray 0%, $background-color 100%);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/marriage-background.png') center/cover;
+    opacity: 0.05;
+    z-index: 0;
+  }
+
+  @include responsive("md") {
+    padding: ($spacing-unit * 12) 0;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 ($spacing-unit * 2);
+  position: relative;
+  z-index: 1;
+
+  @include responsive("lg") {
+    padding: 0 ($spacing-unit * 3);
+  }
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  color: $primary-color;
+  margin-bottom: $spacing-unit * 3;
+  font-family: $font-family-serif;
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -$spacing-unit * 2;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, $primary-color, $secondary-color);
+    border-radius: 2px;
+  }
+
+  @include responsive("md") {
+    font-size: 3rem;
+  }
+}
+
+.sectionDescription {
+  font-size: 1.1rem;
+  color: $dark-gray;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto ($spacing-unit * 6) auto;
+  line-height: 1.7;
+
+  @include responsive("md") {
+    font-size: 1.2rem;
+  }
+}
+
+.stepsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit * 3;
+  margin-bottom: $spacing-unit * 8;
+
+  @include responsive("md") {
+    gap: $spacing-unit * 4;
+  }
+}
+
+.stepCard {
+  background: $background-color;
+  border-radius: $spacing-unit * 2;
+  box-shadow: 0 4px 20px rgba($dark-gray, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba($primary-color, 0.1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba($dark-gray, 0.12);
+    border-color: rgba($primary-color, 0.2);
+  }
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  padding: $spacing-unit * 3;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.02);
+  }
+
+  @include responsive("md") {
+    padding: $spacing-unit * 4;
+  }
+}
+
+.stepNumber {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: $spacing-unit * 3;
+  min-width: 60px;
+
+  @include responsive("md") {
+    margin-right: $spacing-unit * 4;
+    min-width: 80px;
+  }
+}
+
+.stepIcon {
+  font-size: 2rem;
+  margin-bottom: $spacing-unit;
+  display: block;
+
+  @include responsive("md") {
+    font-size: 2.5rem;
+  }
+}
+
+.stepId {
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: $text-color-light;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+
+  @include responsive("md") {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+}
+
+.stepInfo {
+  flex: 1;
+}
+
+.stepTitle {
+  font-size: 1.3rem;
+  color: $primary-color;
+  margin-bottom: $spacing-unit;
+  font-family: $font-family-serif;
+  font-weight: 600;
+
+  @include responsive("md") {
+    font-size: 1.5rem;
+  }
+}
+
+.stepDescription {
+  font-size: 1rem;
+  color: $dark-gray;
+  margin: 0;
+  line-height: 1.5;
+
+  @include responsive("md") {
+    font-size: 1.1rem;
+  }
+}
+
+.expandIcon {
+  font-size: 1.5rem;
+  color: $primary-color;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+  margin-left: $spacing-unit * 2;
+
+  @include responsive("md") {
+    font-size: 1.8rem;
+  }
+}
+
+.stepContent {
+  padding: 0 $spacing-unit * 3 $spacing-unit * 3 $spacing-unit * 3;
+  border-top: 1px solid rgba($medium-gray, 0.5);
+  background: rgba($light-gray, 0.3);
+
+  @include responsive("md") {
+    padding: 0 $spacing-unit * 4 $spacing-unit * 4 $spacing-unit * 4;
+  }
+}
+
+.detailsSection,
+.tipsSection {
+  margin-bottom: $spacing-unit * 3;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+    color: $primary-color;
+    margin-bottom: $spacing-unit * 2;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit;
+
+    &::before {
+      content: '';
+      width: 3px;
+      height: 20px;
+      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      border-radius: 2px;
+    }
+  }
+}
+
+.detailsList,
+.tipsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: $spacing-unit * 3;
+    margin-bottom: $spacing-unit * 1.5;
+    font-size: 0.95rem;
+    color: $dark-gray;
+    line-height: 1.6;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: $primary-color;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    @include responsive("md") {
+      font-size: 1rem;
+    }
+  }
+}
+
+.tipsList li {
+  &::before {
+    content: '💡';
+    font-size: 0.9rem;
+  }
+}
+
+.ctaSection {
+  text-align: center;
+  background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+  color: $text-color-light;
+  padding: $spacing-unit * 6;
+  border-radius: $spacing-unit * 2;
+  margin-top: $spacing-unit * 6;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/home-background.png') center/cover;
+    opacity: 0.1;
+    z-index: 0;
+  }
+
+  h3 {
+    font-size: 1.8rem;
+    margin-bottom: $spacing-unit * 2;
+    font-family: $font-family-serif;
+    position: relative;
+    z-index: 1;
+
+    @include responsive("md") {
+      font-size: 2.2rem;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: $spacing-unit * 4;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+
+    @include responsive("md") {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.ctaButton {
+  position: relative;
+  z-index: 1;
+  background: $secondary-color !important;
+  border: 2px solid $secondary-color !important;
+  color: $text-color-light !important;
+  font-size: 1.1rem !important;
+  padding: ($spacing-unit * 2.5) ($spacing-unit * 5) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba($secondary-color, 0.3);
+
+  &:hover {
+    background: darken($secondary-color, 10%) !important;
+    border-color: darken($secondary-color, 10%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($secondary-color, 0.4);
+  }
+
+  @include responsive("md") {
+    font-size: 1.2rem !important;
+    padding: ($spacing-unit * 3) ($spacing-unit * 6) !important;
+  }
+}
+
+// Animation for step cards
+.stepCard {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@include responsive("sm") {
+  .stepHeader {
+    flex-wrap: wrap;
+    gap: $spacing-unit * 2;
+  }
+
+  .stepNumber {
+    margin-right: $spacing-unit * 2;
+  }
+}

@@ -172,42 +172,6 @@ export default function BiodataPage() {
     });
   };
 
-  // Update onDragEnd to handle reordering
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-    if (!destination) return;
-    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
-
-    // Map droppableId to section key
-    const droppableIdToSectionKey = {
-      personal: "personalFields",
-      contact: "contactFields",
-      professional: "professionalFields",
-      family: "familyFields",
-      extraFields: "extraFields",
-    } as const;
-    const sourceSectionKey = droppableIdToSectionKey[source.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
-    const destSectionKey = droppableIdToSectionKey[destination.droppableId as keyof typeof droppableIdToSectionKey] as SectionKey;
-    if (!sourceSectionKey || !destSectionKey) return;
-
-    if (sourceSectionKey === destSectionKey) {
-      // Reorder within the same section
-      setSectionState[sourceSectionKey]((prev) => reorderList(prev, source.index, destination.index));
-    } else {
-      // Move between sections
-      setSectionState[sourceSectionKey]((prevSource) => {
-        const sourceList = Array.from(prevSource);
-        const [movedField] = sourceList.splice(source.index, 1);
-        setSectionState[destSectionKey]((prevDest) => {
-          const destList = Array.from(prevDest);
-          destList.splice(destination.index, 0, movedField);
-          return destList;
-        });
-        return sourceList;
-      });
-    }
-  };
-
   // Section expand/collapse handler
   const handleToggleSectionExpand = (sectionKey: string) => {
     setSectionExpand(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }));
@@ -543,7 +507,7 @@ export default function BiodataPage() {
                 <div style={{ fontWeight: 600, color: '#6366f1', marginBottom: '0.7rem', fontSize: '1.08rem' }}>{section.title}</div>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#374151' }}>
                   {sectionState[section.stateKey as SectionKey].map((field: any) => (
-                    <li key={field.id} style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.7rem', alignItems: 'center' }}>
+                    <li key={field.id} style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                       <span style={{ fontWeight: 500, minWidth: 90, color: '#6366f1' }}>{field.label}:</span>
                       <span style={{ flex: 1 }}>{field.value || <span style={{ color: '#a0aec0' }}>—</span>}</span>
                     </li>

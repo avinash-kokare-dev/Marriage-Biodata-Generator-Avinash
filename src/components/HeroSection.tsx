@@ -41,11 +41,18 @@ export default function HeroSection() {
           <p className={styles.heroSubtitle}>
             The AI-Powered Marriage Journey Platform, designed with culture, connection, and you in mind.
           </p>
-          <Link href="/biodata" passHref>
-            <Button variant="primary" className={styles.heroCta}>
-              Create Your Biodata
-            </Button>
-          </Link>
+          <div className={styles.heroButtons}>
+            <Link href="/biodata" passHref>
+              <Button variant="primary" className={styles.heroCta}>
+                Create Your Biodata
+              </Button>
+            </Link>
+            <Link href="#how-to-create-biodata" passHref>
+              <Button variant="secondary" className={styles.heroCtaSecondary}>
+                Learn How to Create
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
